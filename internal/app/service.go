@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/utils"
 
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/bootstrap"
@@ -15,6 +16,8 @@ func Run(ctx context.Context, cfg *config.Config) error {
 
 	httpServer := http.New(cfg, repo)
 	httpServer.Start()
+
+	utils.GracefulShutdown()
 
 	return nil
 }

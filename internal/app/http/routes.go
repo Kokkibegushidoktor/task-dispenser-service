@@ -1,5 +1,5 @@
 package http
 
 func (s *Server) setupRoutes() {
-	//s.server.GET("/liveness", s.handlers.Liveness)
+	s.server.GET("/liveliness", s.handlers.Liveliness)
 }

@@ -3,7 +3,7 @@ package config
 import "time"
 
 type Config struct {
-	HttpAddr         string        `env:"HTTP_ADDR"`
+	HttpAddr         string        `env:"HTTP_ADDR" envDefault:":8080"`
 	MngDsn           string        `env:"MNG_DSN"`
 	MngDbName        string        `env:"MNG_DB_NAME"`
 	MngPingInterval  time.Duration `env:"MNG_PING_INTERVAL" envDefault:"10s"`
