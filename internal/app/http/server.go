@@ -3,13 +3,14 @@ package http
 import (
 	"context"
 	"errors"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http/handlers"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/pkg/auth"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/rs/zerolog/log"
 
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http/handlers"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/config"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/closer"
@@ -32,9 +33,15 @@ func New(cfg *config.Config, repo repository.Repository) *Server {
 	server.HideBanner = true
 	server.HidePort = true
 
+	manager, err := auth.NewManager(cfg.JwtSecret)
+	if err != nil {
+		log.Error().Msgf("Error creating a token manager, err: %v", err)
+		manager, _ = auth.NewManager("amogus")
+	}
+
 	return &Server{
 		server:   server,
-		handlers: handlers.New(repo),
+		handlers: handlers.New(repo, manager),
 		cfg:      cfg,
 	}
 }

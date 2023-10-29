@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository/models"
+	api "github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user *models.User) (string, error)
+	CreateUser(ctx context.Context, user *api.CreateUserRequest) (string, error)
+	UserLogin(ctx context.Context, req *api.UserLoginRequest) (*api.User, error)
 }

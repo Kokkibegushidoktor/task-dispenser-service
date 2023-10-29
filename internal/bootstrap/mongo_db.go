@@ -14,7 +14,7 @@ import (
 
 func New(ctx context.Context, cfg *config.Config) *mongo.Client {
 	opts := options.Client().
-		ApplyURI(cfg.MngDsn).
+		ApplyURI(cfg.MngUri).
 		SetMaxPoolSize(uint64(cfg.MngMaxPoolSize)).
 		SetMinPoolSize(uint64(cfg.MngMinPoolSize)).
 		SetMaxConnecting(uint64(cfg.MngMaxConnecting))

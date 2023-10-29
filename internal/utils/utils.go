@@ -19,9 +19,10 @@ func GracefulShutdown() {
 	defer signal.Stop(ch)
 
 	sig := <-ch
-	log.Info().Msgf("%s %v - %s", "Received shutdown signal:", sig, "Graceful shutdown done")
+	log.Info().Msgf("%s %v - %s", "Received shutdown signal:", sig, "Graceful shutdown started")
 
 	closer.CloseAll()
 
 	time.Sleep(gracefulShutdownWaitTime)
+	log.Info().Msg("Graceful shutdown is done")
 }
