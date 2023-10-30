@@ -1,19 +1,22 @@
 package repository
 
 import (
+	"context"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/config"
 )
 
-type RepoImpl struct {
-	client  *mongo.Client
-	UsersCl *mongo.Collection
+type Users interface {
+	Create(ctx context.Context, user *models.User) error
+	GetByCredentials(ctx context.Context, username, password string) (*models.User, error)
 }
 
-func New(cfg *config.Config, client *mongo.Client) *RepoImpl {
-	return &RepoImpl{
-		client:  client,
-		UsersCl: client.Database(cfg.MngDbName).Collection("users"),
+type Repositories struct {
+	Users Users
+}
+
+func NewRepositories(db *mongo.Database) *Repositories {
+	return &Repositories{
+		Users: NewUsersRepo(db),
 	}
 }

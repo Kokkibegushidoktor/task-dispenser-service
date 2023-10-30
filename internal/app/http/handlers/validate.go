@@ -3,21 +3,19 @@ package handlers
 import (
 	"errors"
 	"strings"
-
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 )
 
-func validateUserLoginRequest(req *models.UserLoginRequest) error {
-	if strings.TrimSpace(req.Username) == "" &&
-		strings.TrimSpace(req.Password) == "" {
+func validateSignInInput(inp signInInput) error {
+	if strings.TrimSpace(inp.Username) == "" &&
+		strings.TrimSpace(inp.Password) == "" {
 		return errors.New("empty request")
 	}
 
-	if strings.TrimSpace(req.Username) == "" {
+	if strings.TrimSpace(inp.Username) == "" {
 		return errors.New("empty username")
 	}
 
-	if strings.TrimSpace(req.Password) == "" {
+	if strings.TrimSpace(inp.Password) == "" {
 		return errors.New("empty password")
 	}
 

@@ -4,6 +4,7 @@ import "time"
 
 type Config struct {
 	JwtSecret        string        `env:"JWT_SECRET"`
+	AccessTTL        time.Duration `env:"ACCESS_TTL" envDefault:"30m"`
 	HttpAddr         string        `env:"HTTP_ADDR" envDefault:":8080"`
 	MngUri           string        `env:"MNG_URI"`
 	MngDbName        string        `env:"MNG_DB_NAME"`

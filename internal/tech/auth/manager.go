@@ -2,13 +2,13 @@ package auth
 
 import (
 	"errors"
-	api "github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
 )
 
 type TokenManager interface {
-	NewJWT(user *api.User, ttl time.Duration) (string, error)
+	NewJWT(user *models.User, ttl time.Duration) (string, error)
 	Check(accessToken *jwt.Token) error
 }
 
@@ -24,7 +24,7 @@ func NewManager(signingKey string) (*Manager, error) {
 	return &Manager{signingKey: signingKey}, nil
 }
 
-func (m *Manager) NewJWT(user *api.User, ttl time.Duration) (string, error) {
+func (m *Manager) NewJWT(user *models.User, ttl time.Duration) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)

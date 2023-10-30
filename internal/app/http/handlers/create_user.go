@@ -2,13 +2,16 @@ package handlers
 
 import (
 	"errors"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
 	"net/http"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
-
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 )
+
+type createUserInput struct {
+	Username string `json:"username"`
+}
 
 func (h *Handlers) CreateUser(c echo.Context) error {
 	token, ok := c.Get("user").(*jwt.Token)
@@ -17,18 +20,20 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 	}
 
 	if err := h.tokenManager.Check(token); err != nil {
-		return c.JSON(http.StatusForbidden, &models.ErrResponse{Err: err.Error()})
+		return c.JSON(http.StatusForbidden, &errResponse{Err: err.Error()})
 	}
 
-	req := &models.CreateUserRequest{}
-	if err := c.Bind(&req); err != nil {
-		return c.JSON(http.StatusBadRequest, &models.ErrResponse{Err: err.Error()})
+	inp := createUserInput{}
+	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	id, err := h.repo.CreateUser(c.Request().Context(), req)
+	err := h.services.Users.Create(c.Request().Context(), service.CreateUserInput{
+		Username: inp.Username,
+	})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &models.ErrResponse{Err: err.Error()})
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, id)
+	return c.JSON(http.StatusCreated, &emptyResponse{})
 }

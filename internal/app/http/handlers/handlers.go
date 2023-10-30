@@ -1,18 +1,18 @@
 package handlers
 
 import (
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/pkg/auth"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 )
 
 type Handlers struct {
-	repo         repository.Repository
+	services     *service.Services
 	tokenManager auth.TokenManager
 }
 
-func New(repo repository.Repository, tokenManager auth.TokenManager) *Handlers {
+func New(services *service.Services, tokenManager auth.TokenManager) *Handlers {
 	return &Handlers{
-		repo:         repo,
+		services:     services,
 		tokenManager: tokenManager,
 	}
 }
