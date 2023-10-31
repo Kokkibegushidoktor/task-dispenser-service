@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
 
@@ -21,8 +22,18 @@ type Users interface {
 	Create(ctx context.Context, input CreateUserInput) error
 }
 
+type CreateTaskInput struct {
+	Title       string
+	Description string
+}
+
+type Tasks interface {
+	Create(ctx context.Context, inp CreateTaskInput) (primitive.ObjectID, error)
+}
+
 type Services struct {
 	Users Users
+	Tasks Tasks
 }
 
 type Deps struct {
@@ -33,7 +44,9 @@ type Deps struct {
 
 func NewServices(deps Deps) *Services {
 	usersService := NewUsersService(deps.Repos.Users, deps.TokenManager, deps.AccessTokenTTL)
+	tasksService := NewTasksService(deps.Repos.Tasks)
 	return &Services{
 		Users: usersService,
+		Tasks: tasksService,
 	}
 }
