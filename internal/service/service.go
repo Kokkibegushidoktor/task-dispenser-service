@@ -31,6 +31,21 @@ type Tasks interface {
 	Create(ctx context.Context, inp CreateTaskInput) (primitive.ObjectID, error)
 }
 
+type CreateLevelInput struct {
+	Title         string
+	VarQuestCount int
+	TaskId        string
+}
+
+type UpdateLevelInput struct {
+	ID            string
+	Title         string
+	VarQuestCount int
+}
+
+type Levels interface {
+}
+
 type Services struct {
 	Users Users
 	Tasks Tasks
