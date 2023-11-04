@@ -27,8 +27,16 @@ type CreateTaskInput struct {
 	Description string
 }
 
+type UpdateTaskInput struct {
+	ID          string
+	Title       string
+	Description string
+}
+
 type Tasks interface {
 	Create(ctx context.Context, inp CreateTaskInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateTaskInput) error
+	Delete(ctx context.Context, taskId string) error
 }
 
 type CreateLevelInput struct {
@@ -44,11 +52,35 @@ type UpdateLevelInput struct {
 }
 
 type Levels interface {
+	Create(ctx context.Context, inp CreateLevelInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateLevelInput) error
+	Delete(ctx context.Context, levelId string) error
+	DeleteByTaskId(ctx context.Context, taskId primitive.ObjectID) error
+}
+
+type AddQuestionInput struct {
+	LevelID     string
+	Title       string
+	Description string
+}
+
+type UpdateQuestionInput struct {
+	ID          string
+	Title       string
+	Description string
+}
+
+type Questions interface {
+	Create(ctx context.Context, inp AddQuestionInput) (primitive.ObjectID, error)
+	Update(ctx context.Context, inp UpdateQuestionInput) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
 type Services struct {
-	Users Users
-	Tasks Tasks
+	Users     Users
+	Tasks     Tasks
+	Levels    Levels
+	Questions Questions
 }
 
 type Deps struct {
@@ -59,9 +91,13 @@ type Deps struct {
 
 func NewServices(deps Deps) *Services {
 	usersService := NewUsersService(deps.Repos.Users, deps.TokenManager, deps.AccessTokenTTL)
-	tasksService := NewTasksService(deps.Repos.Tasks)
+	levelsService := NewLevelsService(deps.Repos.Levels)
+	tasksService := NewTasksService(deps.Repos.Tasks, levelsService)
+	questionsService := NewQuestionsService(deps.Repos.Levels)
 	return &Services{
-		Users: usersService,
-		Tasks: tasksService,
+		Users:     usersService,
+		Tasks:     tasksService,
+		Levels:    levelsService,
+		Questions: questionsService,
 	}
 }

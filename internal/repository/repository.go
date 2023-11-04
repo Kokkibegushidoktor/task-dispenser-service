@@ -13,8 +13,9 @@ type Users interface {
 }
 
 type UpdateTaskInput struct {
-	ID    primitive.ObjectID
-	Title string
+	ID          primitive.ObjectID
+	Title       string
+	Description string
 }
 
 type Tasks interface {
@@ -34,6 +35,7 @@ type Levels interface {
 	Create(ctx context.Context, level *models.TaskLevel) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateLevelInput) error
 	Delete(ctx context.Context, id primitive.ObjectID) error
+	DeleteByTaskId(ctx context.Context, id primitive.ObjectID) error
 	GetByTaskId(ctx context.Context, id primitive.ObjectID) ([]models.TaskLevel, error)
 	AddQuestion(ctx context.Context, id primitive.ObjectID, question *models.LevelQuestion) error
 	UpdateQuestion(ctx context.Context, inp *models.LevelQuestion) error

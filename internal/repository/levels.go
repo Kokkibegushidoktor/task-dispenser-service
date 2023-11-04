@@ -46,6 +46,12 @@ func (r *LevelsRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
 	return err
 }
 
+func (r *LevelsRepo) DeleteByTaskId(ctx context.Context, id primitive.ObjectID) error {
+	_, err := r.col.DeleteMany(ctx, bson.M{"taskId": id})
+
+	return err
+}
+
 func (r *LevelsRepo) GetByTaskId(ctx context.Context, id primitive.ObjectID) ([]models.TaskLevel, error) {
 	var levels []models.TaskLevel
 

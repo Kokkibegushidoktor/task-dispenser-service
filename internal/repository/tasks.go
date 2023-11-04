@@ -32,6 +32,10 @@ func (r *TasksRepo) Update(ctx context.Context, inp UpdateTaskInput) error {
 		updateQuery["title"] = inp.Title
 	}
 
+	if inp.Description != "" {
+		updateQuery["description"] = inp.Description
+	}
+
 	_, err := r.col.UpdateByID(ctx, inp.ID, bson.M{"$set": updateQuery})
 
 	return err

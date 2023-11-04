@@ -11,7 +11,7 @@ type LevelsService struct {
 	repo repository.Levels
 }
 
-func NeLevelsService(repo repository.Levels) *LevelsService {
+func NewLevelsService(repo repository.Levels) *LevelsService {
 	return &LevelsService{
 		repo: repo,
 	}
@@ -45,4 +45,17 @@ func (s *LevelsService) Update(ctx context.Context, inp UpdateLevelInput) error 
 	}
 
 	return s.repo.Update(ctx, repoInput)
+}
+
+func (s *LevelsService) Delete(ctx context.Context, levelId string) error {
+	id, err := primitive.ObjectIDFromHex(levelId)
+	if err != nil {
+		return err
+	}
+
+	return s.repo.Delete(ctx, id)
+}
+
+func (s *LevelsService) DeleteByTaskId(ctx context.Context, taskId primitive.ObjectID) error {
+	return s.repo.DeleteByTaskId(ctx, taskId)
 }
