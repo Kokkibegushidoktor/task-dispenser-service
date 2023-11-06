@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -28,7 +30,10 @@ func (h *Handlers) AddQuestion(c echo.Context) error {
 		Description: inp.Description,
 	})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, map[string]string{
@@ -38,7 +43,7 @@ func (h *Handlers) AddQuestion(c echo.Context) error {
 
 type updateQuestionInput struct {
 	ID          string `json:"id"`
-	Tittle      string `json:"tittle"`
+	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
@@ -54,10 +59,37 @@ func (h *Handlers) UpdateQuestion(c echo.Context) error {
 
 	if err := h.services.Questions.Update(c.Request().Context(), service.UpdateQuestionInput{
 		ID:          inp.ID,
-		Title:       inp.Tittle,
+		Title:       inp.Title,
 		Description: inp.Description,
 	}); err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, &emptyResponse{})
+}
+
+type deleteQuestionInput struct {
+	ID string `json:"id"`
+}
+
+func (h *Handlers) DeleteQuestion(c echo.Context) error {
+	var inp deleteQuestionInput
+	if err := c.Bind(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := validateDeleteQuestionInput(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := h.services.Questions.Delete(c.Request().Context(), inp.ID); err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, &emptyResponse{})

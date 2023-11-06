@@ -7,5 +7,5 @@ type User struct {
 	Username string             `json:"username" bson:"username"`
 	Password string             `json:"password" bson:"password"`
 	Admin    bool               `json:"admin" bson:"admin"`
-	Roles    []string           `json:"roles" bson:"roles"`
+	Roles    []string           `json:"roles,omitempty" bson:"roles,omitempty"`
 }

@@ -13,7 +13,7 @@ type TaskLevel struct {
 	TaskId        primitive.ObjectID `json:"taskId" bson:"taskId"`
 	Title         string             `json:"title" bson:"title"`
 	VarQuestCount int                `json:"varQuestCount" bson:"varQuestCount"`
-	Questions     []LevelQuestion    `json:"questions" bson:"questions"`
+	Questions     []LevelQuestion    `json:"questions,omitempty" bson:"questions,omitempty"`
 }
 
 type LevelQuestion struct {

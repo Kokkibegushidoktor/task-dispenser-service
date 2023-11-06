@@ -23,13 +23,13 @@ func (s *LevelsService) Create(ctx context.Context, inp CreateLevelInput) (primi
 		return id, err
 	}
 
-	level := &models.TaskLevel{
+	level := models.TaskLevel{
 		Title:         inp.Title,
 		TaskId:        id,
 		VarQuestCount: inp.VarQuestCount,
 	}
 
-	return s.repo.Create(ctx, level)
+	return s.repo.Create(ctx, &level)
 }
 
 func (s *LevelsService) Update(ctx context.Context, inp UpdateLevelInput) error {

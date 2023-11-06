@@ -73,7 +73,7 @@ type UpdateQuestionInput struct {
 type Questions interface {
 	Create(ctx context.Context, inp AddQuestionInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateQuestionInput) error
-	Delete(ctx context.Context, id primitive.ObjectID) error
+	Delete(ctx context.Context, id string) error
 }
 
 type Services struct {

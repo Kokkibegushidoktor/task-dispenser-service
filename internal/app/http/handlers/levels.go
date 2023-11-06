@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"errors"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -28,7 +30,7 @@ func (h *Handlers) AddTaskLevel(c echo.Context) error {
 		VarQuestCount: inp.VarQuestCount,
 	})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
 	return c.JSON(http.StatusCreated, map[string]string{
@@ -58,7 +60,10 @@ func (h *Handlers) UpdateTaskLevel(c echo.Context) error {
 		VarQuestCount: inp.VarQuestCount,
 	})
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, &emptyResponse{})
@@ -79,7 +84,10 @@ func (h *Handlers) DeleteTaskLevel(c echo.Context) error {
 	}
 
 	if err := h.services.Levels.Delete(c.Request().Context(), inp.ID); err != nil {
-		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, &emptyResponse{})

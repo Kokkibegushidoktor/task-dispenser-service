@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -42,6 +43,9 @@ func (r *LevelsRepo) Update(ctx context.Context, inp UpdateLevelInput) error {
 
 func (r *LevelsRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
 	_, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		return models.ErrNotFound
+	}
 
 	return err
 }
@@ -82,7 +86,7 @@ func (r *LevelsRepo) UpdateQuestion(ctx context.Context, inp *models.LevelQuesti
 		updateQuery["questions.$.description"] = inp.Description
 	}
 
-	_, err := r.col.UpdateOne(ctx, bson.M{"questions._ud": inp.ID}, bson.M{"$set": updateQuery})
+	_, err := r.col.UpdateOne(ctx, bson.M{"questions._id": inp.ID}, bson.M{"$set": updateQuery})
 
 	return err
 }

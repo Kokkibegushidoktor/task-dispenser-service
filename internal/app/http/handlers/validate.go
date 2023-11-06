@@ -93,3 +93,11 @@ func validateUpdateQuestionInput(inp *updateQuestionInput) error {
 
 	return nil
 }
+
+func validateDeleteQuestionInput(inp *deleteQuestionInput) error {
+	if strings.TrimSpace(inp.ID) == "" {
+		return errors.New("empty id")
+	}
+
+	return nil
+}

@@ -37,9 +37,6 @@ func (r *TasksRepo) Update(ctx context.Context, inp UpdateTaskInput) error {
 	}
 
 	_, err := r.col.UpdateByID(ctx, inp.ID, bson.M{"$set": updateQuery})
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return models.ErrNotFound
-	}
 
 	return err
 }
@@ -58,9 +55,6 @@ func (r *TasksRepo) GetById(ctx context.Context, taskId primitive.ObjectID) (*mo
 
 func (r *TasksRepo) Delete(ctx context.Context, taskId primitive.ObjectID) error {
 	_, err := r.col.DeleteOne(ctx, bson.M{"_id": taskId})
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		return models.ErrNotFound
-	}
 
 	return err
 }

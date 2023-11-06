@@ -47,6 +47,10 @@ func (s *QuestionsService) Update(ctx context.Context, inp UpdateQuestionInput) 
 	return s.repo.UpdateQuestion(ctx, repoInput)
 }
 
-func (s *QuestionsService) Delete(ctx context.Context, id primitive.ObjectID) error {
+func (s *QuestionsService) Delete(ctx context.Context, qid string) error {
+	id, err := primitive.ObjectIDFromHex(qid)
+	if err != nil {
+		return err
+	}
 	return s.repo.DeleteQuestion(ctx, id)
 }
