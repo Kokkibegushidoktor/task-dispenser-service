@@ -10,6 +10,7 @@ import (
 type TokenManager interface {
 	NewJWT(user *models.User, ttl time.Duration) (string, error)
 	Check(accessToken *jwt.Token) error
+	GetRoles(token *jwt.Token) ([]string, error)
 }
 
 type Manager struct {
@@ -29,8 +30,10 @@ func (m *Manager) NewJWT(user *models.User, ttl time.Duration) (string, error) {
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["name"] = user.Username
+	claims["sub"] = user.ID.Hex()
 	claims["exp"] = time.Now().Add(ttl).Unix()
-	claims["admin"] = user.Admin
+	claims["adm"] = user.Admin
+	claims["rls"] = user.Roles
 
 	return token.SignedString([]byte(m.signingKey))
 }
@@ -41,7 +44,7 @@ func (m *Manager) Check(token *jwt.Token) error {
 	if !ok {
 		return errors.New("failed to cast claims as jwt.MapClaims")
 	}
-	claim := claims["admin"]
+	claim := claims["adm"]
 	if claim == nil {
 		return errors.New("missing claim")
 	}
@@ -56,4 +59,32 @@ func (m *Manager) Check(token *jwt.Token) error {
 	}
 
 	return nil
+}
+
+func (m *Manager) GetRoles(token *jwt.Token) ([]string, error) {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, errors.New("failed to cast claims as jwt.MapClaims")
+	}
+
+	claim := claims["rls"]
+	if claim == nil {
+		return nil, errors.New("empty claim")
+	}
+
+	rls, ok := claim.([]interface{})
+	if !ok {
+		return nil, errors.New("invalid claim")
+	}
+
+	roles := make([]string, len(rls))
+
+	for i, role := range rls {
+		roles[i], ok = role.(string)
+		if !ok {
+			return nil, errors.New("invalid claim")
+		}
+	}
+
+	return roles, nil
 }

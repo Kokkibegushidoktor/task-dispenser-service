@@ -28,8 +28,8 @@ func (r *UsersRepo) Create(ctx context.Context, user *models.User) error {
 }
 
 func (r *UsersRepo) GetByCredentials(ctx context.Context, username, password string) (*models.User, error) {
-	var user *models.User
-	if err := r.col.FindOne(ctx, bson.M{"username": username, "password": password}).Decode(user); err != nil {
+	var user models.User
+	if err := r.col.FindOne(ctx, bson.M{"username": username, "password": password}).Decode(&user); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, models.ErrNotFound
 		}
@@ -37,5 +37,5 @@ func (r *UsersRepo) GetByCredentials(ctx context.Context, username, password str
 		return nil, err
 	}
 
-	return user, nil
+	return &user, nil
 }
