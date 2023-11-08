@@ -9,13 +9,13 @@ func (s *Server) setupRoutes() {
 	s.server.GET("/liveliness", s.handlers.Liveliness)
 	s.server.POST("/login", s.handlers.UserSignIn)
 
-	authenticated := s.server.Group("", echojwt.WithConfig(echojwt.Config{
+	authenticated := s.server.Group("/authed", echojwt.WithConfig(echojwt.Config{
 		SigningKey: []byte(s.cfg.JwtSecret),
 	}))
 	{
 		authenticated.GET("/jwttest", s.handlers.Jwttest)
 
-		admin := authenticated.Group("", middleware.AdminWithConfig(middleware.AdminConfig{
+		admin := authenticated.Group("/adm", middleware.AdminWithConfig(middleware.AdminConfig{
 			SigningKey: s.cfg.JwtSecret,
 		}))
 		{

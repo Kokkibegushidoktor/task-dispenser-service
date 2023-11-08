@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	_ = godotenv.Load("env")
+	_ = godotenv.Load(".env")
 
 	cfg := &config.Config{}
 

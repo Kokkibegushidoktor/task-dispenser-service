@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -36,14 +35,17 @@ func (r *LevelsRepo) Update(ctx context.Context, inp UpdateLevelInput) error {
 		updateQuery["varQuestCount"] = inp.VarQuestCount
 	}
 
-	_, err := r.col.UpdateByID(ctx, inp.ID, updateQuery)
+	res, err := r.col.UpdateByID(ctx, inp.ID, updateQuery)
+	if res.MatchedCount == 0 {
+		return models.ErrNotFound
+	}
 
 	return err
 }
 
 func (r *LevelsRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
-	_, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
-	if errors.Is(err, mongo.ErrNoDocuments) {
+	res, err := r.col.DeleteOne(ctx, bson.M{"_id": id})
+	if res.DeletedCount == 0 {
 		return models.ErrNotFound
 	}
 
@@ -70,7 +72,10 @@ func (r *LevelsRepo) GetByTaskId(ctx context.Context, id primitive.ObjectID) ([]
 }
 
 func (r *LevelsRepo) AddQuestion(ctx context.Context, id primitive.ObjectID, question *models.LevelQuestion) error {
-	_, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$push": bson.M{"questions": question}})
+	res, err := r.col.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$push": bson.M{"questions": question}})
+	if res.MatchedCount == 0 {
+		return models.ErrNotFound
+	}
 
 	return err
 }
@@ -86,13 +91,18 @@ func (r *LevelsRepo) UpdateQuestion(ctx context.Context, inp *models.LevelQuesti
 		updateQuery["questions.$.description"] = inp.Description
 	}
 
-	_, err := r.col.UpdateOne(ctx, bson.M{"questions._id": inp.ID}, bson.M{"$set": updateQuery})
+	res, err := r.col.UpdateOne(ctx, bson.M{"questions._id": inp.ID}, bson.M{"$set": updateQuery})
+	if res.MatchedCount == 0 {
+		return models.ErrNotFound
+	}
 
 	return err
 }
 
 func (r *LevelsRepo) DeleteQuestion(ctx context.Context, id primitive.ObjectID) error {
-	_, err := r.col.UpdateOne(ctx, bson.M{"questions._id": id}, bson.M{"$pull": bson.M{"questions": bson.M{"_id": id}}})
-
+	res, err := r.col.UpdateOne(ctx, bson.M{"questions._id": id}, bson.M{"$pull": bson.M{"questions": bson.M{"_id": id}}})
+	if res.MatchedCount == 0 {
+		return models.ErrNotFound
+	}
 	return err
 }
