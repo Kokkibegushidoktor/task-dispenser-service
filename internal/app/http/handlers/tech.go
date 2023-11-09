@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func (h *Handlers) Liveliness(c echo.Context) error {
+func (h *Handlers) Liveness(c echo.Context) error {
 	return c.JSON(http.StatusOK, "I am alive")
 }
 

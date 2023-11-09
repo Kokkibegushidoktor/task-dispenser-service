@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"fmt"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/golang-jwt/jwt/v5"
 	"time"
@@ -9,8 +10,7 @@ import (
 
 type TokenManager interface {
 	NewJWT(user *models.User, ttl time.Duration) (string, error)
-	Check(accessToken *jwt.Token) error
-	GetRoles(token *jwt.Token) ([]string, error)
+	Parse(accessToken string) (*jwt.Token, error)
 }
 
 type Manager struct {
@@ -38,53 +38,17 @@ func (m *Manager) NewJWT(user *models.User, ttl time.Duration) (string, error) {
 	return token.SignedString([]byte(m.signingKey))
 }
 
-func (m *Manager) Check(token *jwt.Token) error {
-
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return errors.New("failed to cast claims as jwt.MapClaims")
-	}
-	claim := claims["adm"]
-	if claim == nil {
-		return errors.New("missing claim")
-	}
-
-	admin, ok := claim.(bool)
-	if !ok {
-		return errors.New("invalid claim")
-	}
-
-	if !admin {
-		return errors.New("forbidden")
-	}
-
-	return nil
-}
-
-func (m *Manager) GetRoles(token *jwt.Token) ([]string, error) {
-	claims, ok := token.Claims.(jwt.MapClaims)
-	if !ok {
-		return nil, errors.New("failed to cast claims as jwt.MapClaims")
-	}
-
-	claim := claims["rls"]
-	if claim == nil {
-		return nil, errors.New("empty claim")
-	}
-
-	rls, ok := claim.([]interface{})
-	if !ok {
-		return nil, errors.New("invalid claim")
-	}
-
-	roles := make([]string, len(rls))
-
-	for i, role := range rls {
-		roles[i], ok = role.(string)
-		if !ok {
-			return nil, errors.New("invalid claim")
+func (m *Manager) Parse(accessToken string) (*jwt.Token, error) {
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (i interface{}, err error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
+
+		return []byte(m.signingKey), nil
+	})
+	if err != nil {
+		return nil, err
 	}
 
-	return roles, nil
+	return token, nil
 }

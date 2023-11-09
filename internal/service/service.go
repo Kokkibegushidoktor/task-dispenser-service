@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/hash"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -86,11 +87,12 @@ type Services struct {
 type Deps struct {
 	Repos          *repository.Repositories
 	TokenManager   auth.TokenManager
+	Hasher         hash.PasswordHasher
 	AccessTokenTTL time.Duration
 }
 
 func NewServices(deps Deps) *Services {
-	usersService := NewUsersService(deps.Repos.Users, deps.TokenManager, deps.AccessTokenTTL)
+	usersService := NewUsersService(deps.Repos.Users, deps.TokenManager, deps.Hasher, deps.AccessTokenTTL)
 	levelsService := NewLevelsService(deps.Repos.Levels)
 	tasksService := NewTasksService(deps.Repos.Tasks, levelsService)
 	questionsService := NewQuestionsService(deps.Repos.Levels)

@@ -2,22 +2,20 @@ package http
 
 import (
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http/middleware"
-	echojwt "github.com/labstack/echo-jwt/v4"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 )
 
 func (s *Server) setupRoutes() {
-	s.server.GET("/liveliness", s.handlers.Liveliness)
+	s.server.GET("/liveness", s.handlers.Liveness)
 	s.server.POST("/login", s.handlers.UserSignIn)
 
-	authenticated := s.server.Group("/authed", echojwt.WithConfig(echojwt.Config{
-		SigningKey: []byte(s.cfg.JwtSecret),
-	}))
+	tokenManager, _ := auth.NewManager(s.cfg.JwtSecret)
+
+	authenticated := s.server.Group("/authed", middleware.UserIdentity(tokenManager))
 	{
 		authenticated.GET("/jwttest", s.handlers.Jwttest)
 
-		admin := authenticated.Group("/adm", middleware.AdminWithConfig(middleware.AdminConfig{
-			SigningKey: s.cfg.JwtSecret,
-		}))
+		admin := authenticated.Group("/adm", middleware.Admin())
 		{
 			admin.POST("/create_user", s.handlers.CreateUser)
 
