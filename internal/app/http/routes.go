@@ -1,21 +1,14 @@
 package http
 
-import (
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http/middleware"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
-)
-
 func (s *Server) setupRoutes() {
 	s.server.GET("/liveness", s.handlers.Liveness)
 	s.server.POST("/login", s.handlers.UserSignIn)
 
-	tokenManager, _ := auth.NewManager(s.cfg.JwtSecret)
-
-	authenticated := s.server.Group("/authed", middleware.UserIdentity(tokenManager))
+	authenticated := s.server.Group("/authed", s.handlers.UserIdentity())
 	{
 		authenticated.GET("/jwttest", s.handlers.Jwttest)
 
-		admin := authenticated.Group("/adm", middleware.Admin())
+		admin := authenticated.Group("/adm", s.handlers.Admin())
 		{
 			admin.POST("/create_user", s.handlers.CreateUser)
 
