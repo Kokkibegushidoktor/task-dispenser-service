@@ -22,6 +22,7 @@ type Server struct {
 
 func New(cfg *config.Config, hands *handlers.Handlers) *Server {
 	server := echo.New()
+	server.Validator = handlers.NewInputValidator()
 	server.Use(middleware.Recover())
 	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"http://localhost:3000"},

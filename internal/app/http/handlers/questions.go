@@ -9,8 +9,8 @@ import (
 )
 
 type addQuestionInput struct {
-	LevelID     string `json:"levelId"`
-	Title       string `json:"title"`
+	LevelID     string `json:"levelId" validate:"required"`
+	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
 }
 
@@ -20,7 +20,7 @@ func (h *Handlers) AddQuestion(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateAddQuestionInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -42,7 +42,7 @@ func (h *Handlers) AddQuestion(c echo.Context) error {
 }
 
 type updateQuestionInput struct {
-	ID          string `json:"id"`
+	ID          string `json:"id" validate:"required"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -53,7 +53,7 @@ func (h *Handlers) UpdateQuestion(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateUpdateQuestionInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -72,7 +72,7 @@ func (h *Handlers) UpdateQuestion(c echo.Context) error {
 }
 
 type deleteQuestionInput struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteQuestion(c echo.Context) error {
@@ -81,7 +81,7 @@ func (h *Handlers) DeleteQuestion(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateDeleteQuestionInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 

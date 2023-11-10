@@ -7,8 +7,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+type UpdateUserInput struct {
+	ID       primitive.ObjectID
+	Username string
+	Password string
+}
+
 type Users interface {
 	Create(ctx context.Context, user *models.User) error
+	Update(ctx context.Context, inp UpdateUserInput) error
+	GetByID(ctx context.Context, id primitive.ObjectID) (*models.User, error)
 	GetByCredentials(ctx context.Context, username, password string) (*models.User, error)
 }
 

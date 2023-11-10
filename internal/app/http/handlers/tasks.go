@@ -9,7 +9,7 @@ import (
 )
 
 type createTaskInput struct {
-	Title       string `json:"title"`
+	Title       string `json:"title" validate:"required"`
 	Description string `json:"description"`
 }
 
@@ -19,7 +19,7 @@ func (h *Handlers) CreateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateCreateTaskInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -37,7 +37,7 @@ func (h *Handlers) CreateTask(c echo.Context) error {
 }
 
 type updateTaskInput struct {
-	ID          string `json:"id"`
+	ID          string `json:"id" validate:"required"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -48,7 +48,7 @@ func (h *Handlers) UpdateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateUpdateTaskInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -68,7 +68,7 @@ func (h *Handlers) UpdateTask(c echo.Context) error {
 }
 
 type deleteTaskInput struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteTask(c echo.Context) error {
@@ -77,7 +77,7 @@ func (h *Handlers) DeleteTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateDeleteTaskInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 

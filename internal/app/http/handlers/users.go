@@ -7,12 +7,16 @@ import (
 )
 
 type createUserInput struct {
-	Username string `json:"username"`
+	Username string `json:"username" validate:"required"`
 }
 
 func (h *Handlers) CreateUser(c echo.Context) error {
 	inp := createUserInput{}
 	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -27,8 +31,8 @@ func (h *Handlers) CreateUser(c echo.Context) error {
 }
 
 type signInInput struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (h *Handlers) UserSignIn(c echo.Context) error {
@@ -37,7 +41,7 @@ func (h *Handlers) UserSignIn(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateSignInInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -52,4 +56,29 @@ func (h *Handlers) UserSignIn(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{
 		"token": res,
 	})
+}
+
+type passwordSetUpInput struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+func (h *Handlers) UserPasswordSetUp(c echo.Context) error {
+	var inp passwordSetUpInput
+	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := c.Validate(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := h.services.Users.SetUpPassword(c.Request().Context(), service.UserSetUpPassInput{
+		Username: inp.Username,
+		Password: inp.Password,
+	}); err != nil {
+		return c.JSON(http.StatusUnauthorized, &errResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, &emptyResponse{})
 }

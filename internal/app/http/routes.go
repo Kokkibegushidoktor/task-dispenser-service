@@ -3,6 +3,7 @@ package http
 func (s *Server) setupRoutes() {
 	s.server.GET("/liveness", s.handlers.Liveness)
 	s.server.POST("/login", s.handlers.UserSignIn)
+	s.server.POST("/setup", s.handlers.UserPasswordSetUp)
 
 	authenticated := s.server.Group("/authed", s.handlers.UserIdentity())
 	{

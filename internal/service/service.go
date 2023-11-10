@@ -18,8 +18,14 @@ type CreateUserInput struct {
 	Username string
 }
 
+type UserSetUpPassInput struct {
+	Username string
+	Password string
+}
+
 type Users interface {
 	SignIn(ctx context.Context, input UserSignInInput) (string, error)
+	SetUpPassword(ctx context.Context, inp UserSetUpPassInput) error
 	Create(ctx context.Context, input CreateUserInput) error
 }
 

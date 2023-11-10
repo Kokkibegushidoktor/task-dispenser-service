@@ -9,9 +9,9 @@ import (
 )
 
 type addLevelInput struct {
-	TaskId        string `json:"taskId"`
-	Title         string `json:"title"`
-	VarQuestCount int    `json:"varQuestCount"`
+	TaskId        string `json:"taskId" validate:"required"`
+	Title         string `json:"title" validate:"required"`
+	VarQuestCount int    `json:"varQuestCount" validate:"required"`
 }
 
 func (h *Handlers) AddTaskLevel(c echo.Context) error {
@@ -20,7 +20,7 @@ func (h *Handlers) AddTaskLevel(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateAddLevelInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -39,7 +39,7 @@ func (h *Handlers) AddTaskLevel(c echo.Context) error {
 }
 
 type updateLevelInput struct {
-	ID            string `json:"id"`
+	ID            string `json:"id" validate:"required"`
 	Title         string `json:"title"`
 	VarQuestCount int    `json:"varQuestCount"`
 }
@@ -50,7 +50,7 @@ func (h *Handlers) UpdateTaskLevel(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateUpdateLevelInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
@@ -70,7 +70,7 @@ func (h *Handlers) UpdateTaskLevel(c echo.Context) error {
 }
 
 type deleteLevelInput struct {
-	ID string `json:"id"`
+	ID string `json:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteTaskLevel(c echo.Context) error {
@@ -79,7 +79,7 @@ func (h *Handlers) DeleteTaskLevel(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
-	if err := validateDeleteLevelInput(&inp); err != nil {
+	if err := c.Validate(&inp); err != nil {
 		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
 	}
 
