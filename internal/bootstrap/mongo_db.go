@@ -12,7 +12,7 @@ import (
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/closer"
 )
 
-func New(ctx context.Context, cfg *config.Config) *mongo.Client {
+func NewMongoClient(ctx context.Context, cfg *config.Config) *mongo.Client {
 	opts := options.Client().
 		ApplyURI(cfg.MngUri).
 		SetMaxPoolSize(uint64(cfg.MngMaxPoolSize)).

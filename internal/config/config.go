@@ -13,4 +13,8 @@ type Config struct {
 	MngMinPoolSize   int           `env:"MNG_MIN_POOL_SIZE" envDefault:"400"`
 	MngMaxPoolSize   int           `env:"MNG_MAX_POOL_SIZE" envDefault:"500"`
 	MngMaxConnecting int           `env:"MNG_MAX_CONNECTING" envDefault:"30"`
+	FsEndpoint       string        `env:"STORAGE_ENDPOINT,required"`
+	FsBucket         string        `env:"STORAGE_BUCKET,required"`
+	FsAccessKey      string        `env:"STORAGE_ACCESS_KEY,required"`
+	FsSecretKey      string        `env:"STORAGE_SECRET_KEY,required"`
 }

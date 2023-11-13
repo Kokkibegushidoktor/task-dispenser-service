@@ -2,21 +2,24 @@ package app
 
 import (
 	"context"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http/handlers"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/bootstrap"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/config"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/hash"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/utils"
-
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/app/http"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/bootstrap"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/config"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/pkg/storage"
 )
 
 func Run(ctx context.Context, cfg *config.Config) error {
-	mng := bootstrap.New(ctx, cfg)
+	mng := bootstrap.NewMongoClient(ctx, cfg)
 	db := mng.Database(cfg.MngDbName)
+
+	fs := bootstrap.NewMinioClient(ctx, cfg)
+	storageProvider := storage.NewFileStorage(fs, cfg.FsBucket, cfg.FsEndpoint)
 
 	repos := repository.NewRepositories(db)
 
@@ -28,10 +31,11 @@ func Run(ctx context.Context, cfg *config.Config) error {
 	hasher := hash.NewSHA1Hasher(cfg.PassSalt)
 
 	services := service.NewServices(service.Deps{
-		Repos:          repos,
-		TokenManager:   tokenManager,
-		Hasher:         hasher,
-		AccessTokenTTL: cfg.AccessTTL,
+		Repos:           repos,
+		TokenManager:    tokenManager,
+		Hasher:          hasher,
+		AccessTokenTTL:  cfg.AccessTTL,
+		StorageProvider: storageProvider,
 	})
 
 	hands := handlers.New(services, tokenManager)

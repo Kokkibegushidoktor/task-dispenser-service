@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/hash"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/pkg/storage"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -83,18 +85,24 @@ type Questions interface {
 	Delete(ctx context.Context, id string) error
 }
 
+type Files interface {
+	SaveAndUpload(ctx context.Context, file *models.File) (string, error)
+}
+
 type Services struct {
 	Users     Users
 	Tasks     Tasks
 	Levels    Levels
 	Questions Questions
+	Files     Files
 }
 
 type Deps struct {
-	Repos          *repository.Repositories
-	TokenManager   auth.TokenManager
-	Hasher         hash.PasswordHasher
-	AccessTokenTTL time.Duration
+	Repos           *repository.Repositories
+	TokenManager    auth.TokenManager
+	Hasher          hash.PasswordHasher
+	AccessTokenTTL  time.Duration
+	StorageProvider storage.Provider
 }
 
 func NewServices(deps Deps) *Services {
@@ -102,10 +110,12 @@ func NewServices(deps Deps) *Services {
 	levelsService := NewLevelsService(deps.Repos.Levels)
 	tasksService := NewTasksService(deps.Repos.Tasks, levelsService)
 	questionsService := NewQuestionsService(deps.Repos.Levels)
+	fileService := NewFileService(deps.StorageProvider, deps.Repos.Files)
 	return &Services{
 		Users:     usersService,
 		Tasks:     tasksService,
 		Levels:    levelsService,
 		Questions: questionsService,
+		Files:     fileService,
 	}
 }

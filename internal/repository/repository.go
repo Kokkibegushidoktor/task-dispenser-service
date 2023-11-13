@@ -50,10 +50,19 @@ type Levels interface {
 	DeleteQuestion(ctx context.Context, id primitive.ObjectID) error
 }
 
+type Files interface {
+	Create(ctx context.Context, file *models.File) (primitive.ObjectID, error)
+	UpdateStatus(ctx context.Context, id primitive.ObjectID, status models.FileStatus) error
+	GetForUploading(ctx context.Context) (*models.File, error)
+	UpdateStatusAndSetURL(ctx context.Context, id primitive.ObjectID, url string) error
+	GetByID(ctx context.Context, id, schoolID primitive.ObjectID) (*models.File, error)
+}
+
 type Repositories struct {
 	Users  Users
 	Tasks  Tasks
 	Levels Levels
+	Files  Files
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -61,5 +70,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Users:  NewUsersRepo(db),
 		Tasks:  NewTasksRepo(db),
 		Levels: NewLevelsRepo(db),
+		Files:  NewFilesRepo(db),
 	}
 }

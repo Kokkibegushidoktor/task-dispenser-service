@@ -11,7 +11,7 @@ import (
 type addLevelInput struct {
 	TaskId        string `json:"taskId" validate:"required"`
 	Title         string `json:"title" validate:"required"`
-	VarQuestCount int    `json:"varQuestCount" validate:"required"`
+	VarQuestCount int    `json:"varQuestCount" validate:"required,gt=0"`
 }
 
 func (h *Handlers) AddTaskLevel(c echo.Context) error {

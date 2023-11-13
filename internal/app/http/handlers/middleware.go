@@ -47,7 +47,7 @@ func (h *Handlers) Admin() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return func(c echo.Context) error {
-			token, ok := c.Get("user").(*jwt.Token)
+			token, ok := c.Get(userCtx).(*jwt.Token)
 			if !ok {
 				return errors.New("JWT token missing or invalid")
 			}
@@ -88,7 +88,7 @@ func (h *Handlers) RolesWithConfig(reqRoles []string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return func(c echo.Context) error {
-			token, ok := c.Get("user").(*jwt.Token)
+			token, ok := c.Get(userCtx).(*jwt.Token)
 			if !ok {
 				return errors.New("JWT token missing or invalid")
 			}

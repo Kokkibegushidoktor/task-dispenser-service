@@ -24,6 +24,8 @@ func (s *Server) setupRoutes() {
 			admin.POST("/add_question", s.handlers.AddQuestion)
 			admin.PUT("/update_question", s.handlers.UpdateQuestion)
 			admin.DELETE("/delete_question", s.handlers.DeleteQuestion)
+
+			admin.POST("/upload_image", s.handlers.UploadImage)
 		}
 
 	}
