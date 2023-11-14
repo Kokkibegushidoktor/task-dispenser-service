@@ -77,6 +77,7 @@ type UpdateQuestionInput struct {
 	ID          string
 	Title       string
 	Description string
+	ContentURL  string
 }
 
 type Questions interface {

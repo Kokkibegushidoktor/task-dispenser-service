@@ -39,7 +39,7 @@ func (h *Handlers) AddTaskLevel(c echo.Context) error {
 }
 
 type updateLevelInput struct {
-	ID            string `json:"id" validate:"required"`
+	ID            string `param:"id" validate:"required"`
 	Title         string `json:"title"`
 	VarQuestCount int    `json:"varQuestCount"`
 }
@@ -70,7 +70,7 @@ func (h *Handlers) UpdateTaskLevel(c echo.Context) error {
 }
 
 type deleteLevelInput struct {
-	ID string `json:"id" validate:"required"`
+	ID string `param:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteTaskLevel(c echo.Context) error {

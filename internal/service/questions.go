@@ -42,6 +42,7 @@ func (s *QuestionsService) Update(ctx context.Context, inp UpdateQuestionInput) 
 		ID:          id,
 		Title:       inp.Title,
 		Description: inp.Description,
+		ContentURL:  inp.ContentURL,
 	}
 
 	return s.repo.UpdateQuestion(ctx, repoInput)

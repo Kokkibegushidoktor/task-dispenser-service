@@ -14,16 +14,16 @@ func (s *Server) setupRoutes() {
 			admin.POST("/create_user", s.handlers.CreateUser)
 
 			admin.POST("/create_task", s.handlers.CreateTask)
-			admin.PUT("/update_task", s.handlers.UpdateTask)
-			admin.DELETE("/delete_task", s.handlers.DeleteTask)
+			admin.PUT("/update_task/:id", s.handlers.UpdateTask)
+			admin.DELETE("/delete_task/:id", s.handlers.DeleteTask)
 
 			admin.POST("/add_level", s.handlers.AddTaskLevel)
-			admin.PUT("/update_level", s.handlers.UpdateTaskLevel)
-			admin.DELETE("/delete_level", s.handlers.DeleteTaskLevel)
+			admin.PUT("/update_level/:id", s.handlers.UpdateTaskLevel)
+			admin.DELETE("/delete_level/:id", s.handlers.DeleteTaskLevel)
 
 			admin.POST("/add_question", s.handlers.AddQuestion)
-			admin.PUT("/update_question", s.handlers.UpdateQuestion)
-			admin.DELETE("/delete_question", s.handlers.DeleteQuestion)
+			admin.PUT("/update_question/:id", s.handlers.UpdateQuestion)
+			admin.DELETE("/delete_question/:id", s.handlers.DeleteQuestion)
 
 			admin.POST("/upload_image", s.handlers.UploadImage)
 		}

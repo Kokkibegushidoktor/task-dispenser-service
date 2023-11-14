@@ -37,7 +37,7 @@ func (h *Handlers) CreateTask(c echo.Context) error {
 }
 
 type updateTaskInput struct {
-	ID          string `json:"id" validate:"required"`
+	ID          string `param:"id" validate:"required"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
@@ -68,7 +68,7 @@ func (h *Handlers) UpdateTask(c echo.Context) error {
 }
 
 type deleteTaskInput struct {
-	ID string `json:"id" validate:"required"`
+	ID string `param:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteTask(c echo.Context) error {

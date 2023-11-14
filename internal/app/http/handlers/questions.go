@@ -42,9 +42,10 @@ func (h *Handlers) AddQuestion(c echo.Context) error {
 }
 
 type updateQuestionInput struct {
-	ID          string `json:"id" validate:"required"`
+	ID          string `param:"id" validate:"required"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	ContentURL  string `json:"contentURL"`
 }
 
 func (h *Handlers) UpdateQuestion(c echo.Context) error {
@@ -61,6 +62,7 @@ func (h *Handlers) UpdateQuestion(c echo.Context) error {
 		ID:          inp.ID,
 		Title:       inp.Title,
 		Description: inp.Description,
+		ContentURL:  inp.ContentURL,
 	}); err != nil {
 		if errors.Is(err, models.ErrNotFound) {
 			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
@@ -72,7 +74,7 @@ func (h *Handlers) UpdateQuestion(c echo.Context) error {
 }
 
 type deleteQuestionInput struct {
-	ID string `json:"id" validate:"required"`
+	ID string `param:"id" validate:"required"`
 }
 
 func (h *Handlers) DeleteQuestion(c echo.Context) error {

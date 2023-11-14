@@ -91,6 +91,10 @@ func (r *LevelsRepo) UpdateQuestion(ctx context.Context, inp *models.LevelQuesti
 		updateQuery["questions.$.description"] = inp.Description
 	}
 
+	if inp.ContentURL != "" {
+		updateQuery["questions.$.contentURL"] = inp.ContentURL
+	}
+
 	res, err := r.col.UpdateOne(ctx, bson.M{"questions._id": inp.ID}, bson.M{"$set": updateQuery})
 	if res.MatchedCount == 0 {
 		return models.ErrNotFound
