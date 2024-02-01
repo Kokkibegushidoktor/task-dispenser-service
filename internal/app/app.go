@@ -10,16 +10,15 @@ import (
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/service"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/hash"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/storage"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/utils"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/pkg/storage"
 )
 
 func Run(ctx context.Context, cfg *config.Config) error {
 	mng := bootstrap.NewMongoClient(ctx, cfg)
 	db := mng.Database(cfg.MngDbName)
 
-	fs := bootstrap.NewMinioClient(ctx, cfg)
-	storageProvider := storage.NewFileStorage(fs, cfg.FsBucket, cfg.FsEndpoint)
+	storageProvider := storage.NewLocalFileStorage("static")
 
 	repos := repository.NewRepositories(db)
 

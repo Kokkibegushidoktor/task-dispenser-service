@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/pkg/storage"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/storage"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson/primitive"

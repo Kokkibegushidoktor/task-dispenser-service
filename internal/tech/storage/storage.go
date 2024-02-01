@@ -12,6 +12,11 @@ type UploadInput struct {
 	ContentType string
 }
 
+type DeleteInput struct {
+	Name string
+}
+
 type Provider interface {
 	Upload(ctx context.Context, input UploadInput) (string, error)
+	Delete(ctx context.Context, input DeleteInput) error
 }

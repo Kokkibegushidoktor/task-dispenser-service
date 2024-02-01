@@ -6,7 +6,7 @@ import (
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/repository"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/auth"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/hash"
-	"github.com/Kokkibegushidoktor/task-dispenser-service/pkg/storage"
+	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/tech/storage"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )

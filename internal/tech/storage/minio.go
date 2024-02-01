@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/minio/minio-go/v7"
 )
@@ -32,6 +33,10 @@ func (fs *FileStorage) Upload(ctx context.Context, input UploadInput) (string, e
 	}
 
 	return fs.generateFileURL(input.Name), nil
+}
+
+func (fs *FileStorage) Delete(ctx context.Context, input DeleteInput) error {
+	return errors.New("NOT IMPLEMENTED")
 }
 
 func (fs *FileStorage) generateFileURL(filename string) string {
