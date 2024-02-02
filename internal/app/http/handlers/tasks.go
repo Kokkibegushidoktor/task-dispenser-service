@@ -13,6 +13,10 @@ type createTaskInput struct {
 	Description string `json:"description"`
 }
 
+type createTaskResponse struct {
+	Id string `json:"id"`
+}
+
 func (h *Handlers) CreateTask(c echo.Context) error {
 	var inp createTaskInput
 	if err := c.Bind(&inp); err != nil {
@@ -31,9 +35,7 @@ func (h *Handlers) CreateTask(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
 	}
 
-	return c.JSON(http.StatusCreated, map[string]string{
-		"id": res.Hex(),
-	})
+	return c.JSON(http.StatusCreated, &createTaskResponse{Id: res.Hex()})
 }
 
 type updateTaskInput struct {
@@ -89,4 +91,34 @@ func (h *Handlers) DeleteTask(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, &emptyResponse{})
+}
+
+type getTaskInput struct {
+	ID string `param:"id" validate:"required"`
+}
+
+type getTaskResponse struct {
+	Task *models.Task `json:"task"`
+}
+
+func (h *Handlers) GetTask(c echo.Context) error {
+	var inp getTaskInput
+
+	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := c.Validate(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	res, err := h.services.Tasks.GetById(c.Request().Context(), inp.ID)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, &getTaskResponse{Task: res})
 }

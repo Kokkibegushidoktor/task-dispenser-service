@@ -36,14 +36,17 @@ func (s *FileService) Save(ctx context.Context, file *models.File) (primitive.Ob
 }
 
 func (s *FileService) SaveAndUpload(ctx context.Context, file *models.File) (string, error) {
-	defer deleteFile(file.Name)
+	oldName := file.Name
+	defer deleteFile(oldName)
+
+	file.Name = s.generateFilename(file)
 
 	id, err := s.Save(ctx, file)
 	if err != nil {
 		return "", err
 	}
 
-	url, err := s.upload(ctx, file)
+	url, err := s.upload(ctx, file, oldName)
 	if err != nil {
 		if err := s.repo.UpdateStatus(ctx, id, models.StorageUploadError); err != nil {
 			return "", err
@@ -58,8 +61,8 @@ func (s *FileService) SaveAndUpload(ctx context.Context, file *models.File) (str
 	return url, nil
 }
 
-func (s *FileService) upload(ctx context.Context, file *models.File) (string, error) {
-	f, err := os.Open(file.Name)
+func (s *FileService) upload(ctx context.Context, file *models.File, oldName string) (string, error) {
+	f, err := os.Open(oldName)
 	if err != nil {
 		return "", err
 	}
@@ -72,7 +75,7 @@ func (s *FileService) upload(ctx context.Context, file *models.File) (string, er
 
 	return s.storage.Upload(ctx, storage.UploadInput{
 		File:        f,
-		Name:        s.generateFilename(file),
+		Name:        file.Name,
 		ContentType: file.ContentType,
 		Size:        file.Size,
 	})

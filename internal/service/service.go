@@ -46,6 +46,7 @@ type Tasks interface {
 	Create(ctx context.Context, inp CreateTaskInput) (primitive.ObjectID, error)
 	Update(ctx context.Context, inp UpdateTaskInput) error
 	Delete(ctx context.Context, taskId string) error
+	GetById(ctx context.Context, taskId string) (*models.Task, error)
 }
 
 type CreateLevelInput struct {
@@ -65,6 +66,8 @@ type Levels interface {
 	Update(ctx context.Context, inp UpdateLevelInput) error
 	Delete(ctx context.Context, levelId string) error
 	DeleteByTaskId(ctx context.Context, taskId primitive.ObjectID) error
+	GetByTaskId(ctx context.Context, taskId string) ([]models.TaskLevel, error)
+	GetById(ctx context.Context, levelId string) (*models.TaskLevel, error)
 }
 
 type AddQuestionInput struct {

@@ -92,3 +92,61 @@ func (h *Handlers) DeleteTaskLevel(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, &emptyResponse{})
 }
+
+type getLevelInput struct {
+	ID string `param:"id" validate:"required"`
+}
+
+type getLevelResponse struct {
+	Level *models.TaskLevel `json:"level"`
+}
+
+func (h *Handlers) GetTaskLevel(c echo.Context) error {
+	var inp getLevelInput
+	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := c.Validate(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	res, err := h.services.Levels.GetById(c.Request().Context(), inp.ID)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, &getLevelResponse{Level: res})
+}
+
+type getLevelsByTaskInput struct {
+	ID string `param:"id" validate:"required"`
+}
+
+type getLevelByTaskResponse struct {
+	Level []models.TaskLevel `json:"level"`
+}
+
+func (h *Handlers) GetTaskLevelByTask(c echo.Context) error {
+	var inp getLevelsByTaskInput
+	if err := c.Bind(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	if err := c.Validate(&inp); err != nil {
+		return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+	}
+
+	res, err := h.services.Levels.GetByTaskId(c.Request().Context(), inp.ID)
+	if err != nil {
+		if errors.Is(err, models.ErrNotFound) {
+			return c.JSON(http.StatusBadRequest, &errResponse{Err: err.Error()})
+		}
+		return c.JSON(http.StatusInternalServerError, &errResponse{Err: err.Error()})
+	}
+
+	return c.JSON(http.StatusOK, &getLevelByTaskResponse{Level: res})
+}

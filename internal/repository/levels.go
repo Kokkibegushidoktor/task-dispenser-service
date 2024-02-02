@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/Kokkibegushidoktor/task-dispenser-service/internal/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,6 +70,18 @@ func (r *LevelsRepo) GetByTaskId(ctx context.Context, id primitive.ObjectID) ([]
 	err = cur.All(ctx, &levels)
 
 	return levels, err
+}
+
+func (r *LevelsRepo) GetById(ctx context.Context, id primitive.ObjectID) (*models.TaskLevel, error) {
+	var level models.TaskLevel
+	if err := r.col.FindOne(ctx, bson.M{"_id": id}).Decode(&level); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, models.ErrNotFound
+		}
+
+		return nil, err
+	}
+	return &level, nil
 }
 
 func (r *LevelsRepo) AddQuestion(ctx context.Context, id primitive.ObjectID, question *models.LevelQuestion) error {

@@ -45,6 +45,7 @@ type Levels interface {
 	Delete(ctx context.Context, id primitive.ObjectID) error
 	DeleteByTaskId(ctx context.Context, id primitive.ObjectID) error
 	GetByTaskId(ctx context.Context, id primitive.ObjectID) ([]models.TaskLevel, error)
+	GetById(ctx context.Context, id primitive.ObjectID) (*models.TaskLevel, error)
 	AddQuestion(ctx context.Context, id primitive.ObjectID, question *models.LevelQuestion) error
 	UpdateQuestion(ctx context.Context, inp *models.LevelQuestion) error
 	DeleteQuestion(ctx context.Context, id primitive.ObjectID) error

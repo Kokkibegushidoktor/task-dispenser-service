@@ -10,9 +10,12 @@ func (s *Server) setupRoutes() {
 	s.server.POST("/create_user", s.handlers.CreateUser, s.handlers.UserIdentity(), s.handlers.Admin())
 
 	s.server.POST("/task", s.handlers.CreateTask, s.handlers.UserIdentity(), s.handlers.Admin())
+	s.server.GET("/task/:id", s.handlers.GetTask, s.handlers.UserIdentity(), s.handlers.Admin())
+	s.server.GET("/task/:id/levels", s.handlers.GetTaskLevelByTask, s.handlers.UserIdentity(), s.handlers.Admin())
 	s.server.PUT("/task/:id", s.handlers.UpdateTask, s.handlers.UserIdentity(), s.handlers.Admin())
 	s.server.DELETE("/task/:id", s.handlers.DeleteTask, s.handlers.UserIdentity(), s.handlers.Admin())
 
+	s.server.GET("/level/:id", s.handlers.GetTaskLevel, s.handlers.UserIdentity(), s.handlers.Admin())
 	s.server.POST("/level", s.handlers.AddTaskLevel, s.handlers.UserIdentity(), s.handlers.Admin())
 	s.server.PUT("/level/:id", s.handlers.UpdateTaskLevel, s.handlers.UserIdentity(), s.handlers.Admin())
 	s.server.DELETE("/level/:id", s.handlers.DeleteTaskLevel, s.handlers.UserIdentity(), s.handlers.Admin())

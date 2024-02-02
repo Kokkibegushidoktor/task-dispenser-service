@@ -46,7 +46,7 @@ func (fs *LocalFileStorage) Upload(ctx context.Context, input UploadInput) (stri
 }
 
 func (fs *LocalFileStorage) Delete(ctx context.Context, input DeleteInput) error {
-	if err := os.Remove(input.Name); err != nil {
+	if err := os.Remove(fmt.Sprintf("%s/%s", fs.folder, input.Name)); err != nil {
 		return err
 	}
 

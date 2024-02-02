@@ -49,9 +49,18 @@ func (s *TasksService) Delete(ctx context.Context, taskId string) error {
 		return err
 	}
 
-	if err := s.repo.Delete(ctx, id); err != nil {
+	if err = s.repo.Delete(ctx, id); err != nil {
 		return err
 	}
 
 	return s.levelsService.DeleteByTaskId(ctx, id)
+}
+
+func (s *TasksService) GetById(ctx context.Context, taskId string) (*models.Task, error) {
+	id, err := primitive.ObjectIDFromHex(taskId)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.repo.GetById(ctx, id)
 }

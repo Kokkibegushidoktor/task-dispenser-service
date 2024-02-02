@@ -45,15 +45,15 @@ func (r *TasksRepo) Update(ctx context.Context, inp UpdateTaskInput) error {
 }
 
 func (r *TasksRepo) GetById(ctx context.Context, taskId primitive.ObjectID) (*models.Task, error) {
-	var task *models.Task
-	if err := r.col.FindOne(ctx, bson.M{"_id": taskId}).Decode(task); err != nil {
+	var task models.Task
+	if err := r.col.FindOne(ctx, bson.M{"_id": taskId}).Decode(&task); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, models.ErrNotFound
 		}
 
 		return nil, err
 	}
-	return task, nil
+	return &task, nil
 }
 
 func (r *TasksRepo) Delete(ctx context.Context, taskId primitive.ObjectID) error {
